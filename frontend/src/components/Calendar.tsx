@@ -52,6 +52,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick }) => {
       case 'opened_late': return 'status-opened-late';
       case 'closed_early': return 'status-closed-early';
       case 'never_opened': return 'status-never-opened';
+      case 'outside_hours': return 'status-outside-hours';
       default: return 'status-not-operating';
     }
   };
@@ -62,6 +63,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick }) => {
       case 'opened_late': return 'Opened Late';
       case 'closed_early': return 'Closed Early';
       case 'never_opened': return 'Never Opened';
+      case 'outside_hours': return 'Outside Hours';
       default: return 'Not Operating';
     }
   };
@@ -141,11 +143,6 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick }) => {
               onClick={() => {
                 if (isCurrentMonth) {
                   const formattedDate = formatDateToString(date);
-                  console.log('Calendar click:', {
-                    clickedDate: date.toString(),
-                    formatted: formattedDate,
-                    dayNumber: date.getDate()
-                  });
                   onDateClick(formattedDate);
                 }
               }}
@@ -176,6 +173,10 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick }) => {
         <div className="legend-item">
           <div className="legend-color status-never-opened"></div>
           <span>Never Opened</span>
+        </div>
+        <div className="legend-item">
+          <div className="legend-color status-outside-hours"></div>
+          <span>Outside Hours</span>
         </div>
       </div>
     </div>
