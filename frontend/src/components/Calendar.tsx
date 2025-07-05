@@ -138,7 +138,17 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick }) => {
               className={`calendar-day ${isCurrentMonth ? 'current-month' : 'other-month'} ${
                 isToday ? 'today' : ''
               } ${dayData ? getStatusColor(dayData.status) : ''}`}
-              onClick={() => isCurrentMonth && onDateClick(formatDateToString(date))}
+              onClick={() => {
+                if (isCurrentMonth) {
+                  const formattedDate = formatDateToString(date);
+                  console.log('Calendar click:', {
+                    clickedDate: date.toString(),
+                    formatted: formattedDate,
+                    dayNumber: date.getDate()
+                  });
+                  onDateClick(formattedDate);
+                }
+              }}
               title={dayData ? getStatusText(dayData.status) : ''}
             >
               <div className="day-number">{date.getDate()}</div>
