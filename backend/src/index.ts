@@ -10,42 +10,8 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// CORS configuration for development and production
-const corsOptions = {
-  origin: function (origin: string | undefined, callback: (error: Error | null, allow?: boolean) => void) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    
-    // Development origins
-    const allowedOrigins = [
-      'http://localhost:3000',          // React dev server
-      'http://localhost:3001',          // Backend server
-      'http://localhost',               // Production frontend
-      'http://127.0.0.1:3000',         // Alternative localhost
-      'http://127.0.0.1:3001',         // Alternative localhost
-    ];
-    
-    // Add production domain if specified
-    if (process.env.FRONTEND_URL) {
-      allowedOrigins.push(process.env.FRONTEND_URL);
-    }
-    
-    if (allowedOrigins.includes(origin)) {
-      console.log(`CORS: Allowed request from origin: ${origin}`);
-      callback(null, true);
-    } else {
-      console.warn(`CORS: Blocked request from origin: ${origin}`);
-      console.warn(`CORS: Allowed origins are: ${allowedOrigins.join(', ')}`);
-      callback(new Error('Not allowed by CORS'), false);
-    }
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-};
-
-// Middleware
-app.use(cors(corsOptions));
+// Middleware - Allow all CORS requests
+app.use(cors());
 app.use(express.json());
 
 // Routes
