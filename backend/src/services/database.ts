@@ -1,7 +1,13 @@
 import { pool } from '../database/connection';
 import { StatusCheck, DailyEvent, CalendarDay } from '../types';
+import moment from 'moment-timezone';
 
 export class DatabaseService {
+  async getRestaurantTimezone(): Promise<string> {
+    const query = 'SELECT timezone FROM restaurant_config LIMIT 1';
+    const result = await pool.query(query);
+    return result.rows[0]?.timezone || 'America/Sao_Paulo';
+  }
   async saveStatusCheck(isOpen: boolean, responseTime?: number, errorMessage?: string, pageContent?: string): Promise<void> {
     const query = `
       INSERT INTO status_checks (is_open, response_time, error_message, page_content)
@@ -93,7 +99,7 @@ export class DatabaseService {
       // Determine primary status for the day
       let status: CalendarDay['status'] = 'not_operating_day';
       if (events.length > 0) {
-        // Priority: never_opened > closed_early > opened_late > fully_open
+        // Priority: never_opened > closed_early > opened_late > fully_open > outside_hours
         if (events.some(e => e.event_type === 'never_opened')) {
           status = 'never_opened';
         } else if (events.some(e => e.event_type === 'closed_early')) {
@@ -102,6 +108,8 @@ export class DatabaseService {
           status = 'opened_late';
         } else if (events.some(e => e.event_type === 'fully_open')) {
           status = 'fully_open';
+        } else if (events.some(e => e.event_type === 'outside_hours')) {
+          status = 'outside_hours';
         }
       }
       

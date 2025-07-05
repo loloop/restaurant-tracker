@@ -37,8 +37,8 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick }) => {
       const startDate = formatDateToString(new Date(year, month, 1));
       const endDate = formatDateToString(new Date(year, month + 1, 0));
       
-      const data = await ApiService.getCalendarData(startDate, endDate);
-      setCalendarData(data);
+      const response = await ApiService.getCalendarData(startDate, endDate);
+      setCalendarData(response.calendar);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load calendar data');
     } finally {

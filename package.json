@@ -19,6 +19,10 @@
     "docker:rebuild": "docker-compose build --no-cache && docker-compose up"
   },
   "devDependencies": {
+    "@types/moment-timezone": "^0.5.13",
     "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "moment-timezone": "^0.6.0"
   }
 }

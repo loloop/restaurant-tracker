@@ -1,5 +1,6 @@
 import puppeteer, { Browser, Page } from 'puppeteer';
 import * as cron from 'node-cron';
+import moment from 'moment-timezone';
 import { DatabaseService } from './database';
 import { pool } from '../database/connection';
 
@@ -124,10 +125,12 @@ export class MonitoringService {
   }
 
   private async analyzeDailyPattern(config: any, currentStatus: boolean) {
-    const now = new Date();
-    const today = now.toISOString().split('T')[0];
-    const currentTime = now.toTimeString().split(' ')[0].substring(0, 5); // HH:MM format
-    const dayOfWeek = now.getDay(); // 0 = Sunday, 1 = Monday, etc.
+    // Use restaurant timezone for all date/time calculations
+    const restaurantTimezone = config.timezone || 'America/Sao_Paulo';
+    const now = moment().tz(restaurantTimezone);
+    const today = now.format('YYYY-MM-DD');
+    const currentTime = now.format('HH:mm');
+    const dayOfWeek = now.day(); // 0 = Sunday, 1 = Monday, etc.
     
     // Check if today is an operating day
     const isOperatingDay = config.operating_days.includes(dayOfWeek);
@@ -142,15 +145,15 @@ export class MonitoringService {
     
     const isWithinOperatingHours = currentTime >= expectedOpenTime && currentTime <= expectedCloseTime;
     
-    // Get today's status checks to analyze patterns
+    // Get today's status checks to analyze patterns (in restaurant timezone)
     const checksQuery = `
       SELECT timestamp, is_open
       FROM status_checks
-      WHERE DATE(timestamp) = $1
+      WHERE DATE(timestamp AT TIME ZONE $2) = $1
       ORDER BY timestamp ASC
     `;
     
-    const checksResult = await pool.query(checksQuery, [today]);
+    const checksResult = await pool.query(checksQuery, [today, restaurantTimezone]);
     const todaysChecks = checksResult.rows;
     
     if (todaysChecks.length === 0) {
@@ -165,13 +168,13 @@ export class MonitoringService {
     let actualOpenTime: string | null = null;
     let actualCloseTime: string | null = null;
     
-    // Find first time it was open today
+    // Find first time it was open today (convert to restaurant timezone)
     if (openChecks.length > 0) {
       const firstOpenCheck = openChecks[0];
-      actualOpenTime = firstOpenCheck.timestamp.toTimeString().split(' ')[0].substring(0, 5);
+      actualOpenTime = moment(firstOpenCheck.timestamp).tz(restaurantTimezone).format('HH:mm');
     }
     
-    // Find last time it was open today
+    // Find last time it was open today (convert to restaurant timezone)
     if (openChecks.length > 0) {
       const lastOpenCheck = openChecks[openChecks.length - 1];
       const nextCheck = todaysChecks.find(check => 
@@ -179,12 +182,16 @@ export class MonitoringService {
       );
       
       if (nextCheck) {
-        actualCloseTime = nextCheck.timestamp.toTimeString().split(' ')[0].substring(0, 5);
+        actualCloseTime = moment(nextCheck.timestamp).tz(restaurantTimezone).format('HH:mm');
       }
     }
     
     // Determine event type
-    if (openChecks.length === 0) {
+    if (!isWithinOperatingHours && openChecks.length === 0) {
+      // If we're outside operating hours and restaurant is closed, that's expected
+      eventType = 'outside_hours';
+    } else if (isWithinOperatingHours && openChecks.length === 0) {
+      // If we're within operating hours but restaurant never opened, that's an issue
       eventType = 'never_opened';
     } else if (actualOpenTime && actualOpenTime > expectedOpenTime) {
       eventType = 'opened_late';
@@ -207,7 +214,8 @@ export class MonitoringService {
           total_checks: todaysChecks.length,
           open_checks: openChecks.length,
           closed_checks: closedChecks.length,
-          last_updated: now.toISOString()
+          last_updated: now.toISOString(),
+          timezone: restaurantTimezone
         }
       });
       

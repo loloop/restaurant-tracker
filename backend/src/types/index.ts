@@ -10,7 +10,7 @@ export interface StatusCheck {
 export interface DailyEvent {
   id: number;
   date: string;
-  event_type: 'fully_open' | 'opened_late' | 'closed_early' | 'never_opened';
+  event_type: 'fully_open' | 'opened_late' | 'closed_early' | 'never_opened' | 'outside_hours';
   expected_open_time: string;
   expected_close_time: string;
   actual_open_time?: string;
@@ -34,6 +34,6 @@ export interface RestaurantConfig {
 
 export interface CalendarDay {
   date: string;
-  status: 'fully_open' | 'opened_late' | 'closed_early' | 'never_opened' | 'not_operating_day';
+  status: 'fully_open' | 'opened_late' | 'closed_early' | 'never_opened' | 'outside_hours' | 'not_operating_day';
   events: DailyEvent[];
 }

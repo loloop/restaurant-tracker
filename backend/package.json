@@ -16,7 +16,8 @@
     "pg": "^8.11.3",
     "puppeteer": "^21.6.1",
     "node-cron": "^3.0.3",
-    "dotenv": "^16.3.1"
+    "dotenv": "^16.3.1",
+    "moment-timezone": "^0.5.44"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
@@ -24,6 +25,7 @@
     "@types/pg": "^8.10.9",
     "@types/node": "^20.10.5",
     "@types/node-cron": "^3.0.11",
+    "@types/moment-timezone": "^0.5.30",
     "typescript": "^5.3.3",
     "tsx": "^4.6.2",
     "eslint": "^8.56.0",
