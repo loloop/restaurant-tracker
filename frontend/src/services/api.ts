@@ -3,7 +3,7 @@ import { CalendarDay, DailyEvent, StatusCheck } from '../types';
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
 
 export class ApiService {
-  static async getCalendarData(startDate: string, endDate: string): Promise<CalendarDay[]> {
+  static async getCalendarData(startDate: string, endDate: string): Promise<{calendar: CalendarDay[], timezone: string}> {
     const response = await fetch(
       `${API_BASE_URL}/calendar?startDate=${startDate}&endDate=${endDate}`
     );

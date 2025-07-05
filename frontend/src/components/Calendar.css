@@ -122,6 +122,11 @@
   border-left: 4px solid #6c757d;
 }
 
+.status-outside-hours {
+  background: #e7f3ff !important;
+  border-left: 4px solid #17a2b8;
+}
+
 .status-not-operating {
   background: #e9ecef !important;
 }

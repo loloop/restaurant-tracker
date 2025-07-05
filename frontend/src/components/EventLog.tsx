@@ -40,7 +40,9 @@ const EventLog: React.FC<EventLogProps> = ({ selectedDate, onClose }) => {
   };
 
   const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr);
+    // Parse YYYY-MM-DD format safely without timezone conversion
+    const [year, month, day] = dateStr.split('-').map(Number);
+    const date = new Date(year, month - 1, day); // month is 0-indexed
     return date.toLocaleDateString('en-US', {
       weekday: 'long',
       year: 'numeric',
@@ -55,6 +57,7 @@ const EventLog: React.FC<EventLogProps> = ({ selectedDate, onClose }) => {
       case 'opened_late': return '⏰';
       case 'closed_early': return '⏰';
       case 'never_opened': return '❌';
+      case 'outside_hours': return '🕐';
       default: return '❓';
     }
   };
@@ -69,6 +72,8 @@ const EventLog: React.FC<EventLogProps> = ({ selectedDate, onClose }) => {
         return `Restaurant closed early at ${formatTime(event.actual_close_time)} (expected ${formatTime(event.expected_close_time)})`;
       case 'never_opened':
         return `Restaurant never opened (expected ${formatTime(event.expected_open_time)} - ${formatTime(event.expected_close_time)})`;
+      case 'outside_hours':
+        return `Checked outside operating hours (expected ${formatTime(event.expected_open_time)} - ${formatTime(event.expected_close_time)})`;
       default:
         return 'Unknown event';
     }

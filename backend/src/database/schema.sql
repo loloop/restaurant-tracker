@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS status_checks (
 CREATE TABLE IF NOT EXISTS daily_events (
     id SERIAL PRIMARY KEY,
     date DATE NOT NULL,
-    event_type VARCHAR(50) NOT NULL, -- 'fully_open', 'opened_late', 'closed_early', 'never_opened'
+    event_type VARCHAR(50) NOT NULL, -- 'fully_open', 'opened_late', 'closed_early', 'never_opened', 'outside_hours'
     expected_open_time TIME NOT NULL, -- 16:00
     expected_close_time TIME NOT NULL, -- 23:00
     actual_open_time TIME,

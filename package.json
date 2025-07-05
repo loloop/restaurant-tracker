@@ -13,9 +13,16 @@
     "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
     "db:start": "docker-compose -f docker-compose.dev.yml up -d",
     "db:stop": "docker-compose -f docker-compose.dev.yml down",
-    "setup": "npm run install:all && npm run db:start"
+    "setup": "npm run install:all && npm run db:start",
+    "docker:dev": "docker-compose up --build",
+    "docker:fresh": "docker-compose down && docker-compose up --build",
+    "docker:rebuild": "docker-compose build --no-cache && docker-compose up"
   },
   "devDependencies": {
+    "@types/moment-timezone": "^0.5.13",
     "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "moment-timezone": "^0.6.0"
   }
 }

@@ -13,12 +13,15 @@ router.get('/calendar', async (req, res) => {
       return res.status(400).json({ error: 'startDate and endDate are required' });
     }
     
-    const calendarData = await dbService.getCalendarData(
-      startDate as string,
-      endDate as string
-    );
+    const [calendarData, timezone] = await Promise.all([
+      dbService.getCalendarData(startDate as string, endDate as string),
+      dbService.getRestaurantTimezone()
+    ]);
     
-    res.json(calendarData);
+    res.json({
+      calendar: calendarData,
+      timezone: timezone
+    });
   } catch (error) {
     console.error('Error fetching calendar data:', error);
     res.status(500).json({ error: 'Internal server error' });

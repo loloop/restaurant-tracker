@@ -107,6 +107,11 @@
   border-left-color: #6c757d;
 }
 
+.event-item.outside_hours {
+  background: #e7f3ff;
+  border-left-color: #17a2b8;
+}
+
 .event-icon {
   font-size: 24px;
   margin-top: 2px;
