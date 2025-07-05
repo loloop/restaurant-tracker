@@ -3,12 +3,8 @@ import fs from 'fs';
 import path from 'path';
 
 const pool = new Pool({
-  host: 'localhost',
-  port: 5432,
-  database: 'restaurant_tracker',
-  user: 'postgres',
-  password: 'password',
-  ssl: false,
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' && !process.env.DATABASE_URL?.includes('localhost') ? { rejectUnauthorized: false } : false,
 });
 
 export async function initDatabase() {
