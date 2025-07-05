@@ -21,7 +21,7 @@ services:
       DATABASE_URL: postgresql://postgres:${DB_PASSWORD:-password}@db:5432/restaurant_tracker?sslmode=disable
       PORT: 3001
       NODE_ENV: production
-      FRONTEND_URL: ${FRONTEND_URL:-http://localhost}
+      FRONTEND_URL: ${FRONTEND_URL:-https://pastel.mauriciocardozo.me}
     ports:
       - "3001:3001"
     depends_on:
