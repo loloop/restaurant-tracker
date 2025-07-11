@@ -132,12 +132,8 @@ export class MonitoringService {
     const currentTime = now.format('HH:mm');
     const dayOfWeek = now.day(); // 0 = Sunday, 1 = Monday, etc.
     
-    // Check if today is an operating day
+    // Check if today is an operating day (kept for reference but not used for filtering)
     const isOperatingDay = config.operating_days.includes(dayOfWeek);
-    
-    if (!isOperatingDay) {
-      return; // Don't analyze non-operating days
-    }
     
     // Check if we're within operating hours
     const expectedOpenTime = config.open_time;

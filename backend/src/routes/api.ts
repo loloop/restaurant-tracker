@@ -52,4 +52,18 @@ router.get('/status-checks', async (req, res) => {
   }
 });
 
+// Get latest status check
+router.get('/status/latest', async (req, res) => {
+  try {
+    const latestCheck = await dbService.getStatusChecks(1);
+    if (latestCheck.length === 0) {
+      return res.status(404).json({ error: 'No status checks found' });
+    }
+    res.json(latestCheck[0]);
+  } catch (error) {
+    console.error('Error fetching latest status:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 export default router;
