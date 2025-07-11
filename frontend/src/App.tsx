@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Calendar from './components/Calendar';
 import EventLog from './components/EventLog';
+import StatusIndicator from './components/StatusIndicator';
 import './App.css';
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
       </header>
       
       <main className="App-main">
+        <StatusIndicator />
         <Calendar onDateClick={handleDateClick} />
         
         {selectedDate && (
